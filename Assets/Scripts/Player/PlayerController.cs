@@ -1,18 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using Managers;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace Player
 {
-    // Start is called before the first frame update
-    void Start()
+    public class PlayerController : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private GameManager _gameManager;
+        [SerializeField] private PlayerCubeHolder _playerCubeHolder;
+        [SerializeField] private PlayerAnimationController _animationController;
+        [SerializeField] private PlayerMoveByTouch _playerMove;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private void OnEnable()
+        {
+            _playerCubeHolder.OnLastCubeDetached += _gameManager.SetGameOver;
+            _playerCubeHolder.OnLastCubeDetached += _animationController.SetPlayerDeadAnimation;
+            _playerCubeHolder.OnLastCubeDetached += () => _playerMove.enabled = false;
+        }
+
+        private void OnDisable()
+        {
+            _playerCubeHolder.OnLastCubeDetached -= _gameManager.SetGameOver;
+            _playerCubeHolder.OnLastCubeDetached -= _animationController.SetPlayerDeadAnimation;
+        }
     }
 }
